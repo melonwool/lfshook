@@ -4,25 +4,27 @@ Sometimes developers like to write directly to a file on the filesystem. This is
 
 ## Example
 ```go
+package main
+
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/rifflock/lfshook"
+    "github.com/rifflock/lfshook"
+    log "github.com/sirupsen/logrus"
 )
 
 var Log *log.Logger
 
-func NewLogger( config map[string]interface{} ) *log.Logger {
-	if Log != nil {
-		return Log
-	}
-
-	Log = log.New()
-	Log.SetFormatter(&log.JSONFormatter{})
-	Log.Hooks.Add(lfshook.NewHook(lfshook.PathMap{
-		log.InfoLevel : "/var/log/info.log",
-		log.ErrorLevel : "/var/log/error.log",
-	}))
-	return Log
+func NewLogger(config map[string]interface{}) *log.Logger {
+    if Log != nil {
+        return Log 
+    }   
+    hook := lfshook.NewHook(lfshook.PathMap{
+        log.InfoLevel:  "/var/log/info.log",
+        log.ErrorLevel: "/var/log/error.log",
+    })  
+    hook.SetFormatter(&log.JSONFormatter{})
+    Log = log.New()
+    Log.Hooks.Add(hook)
+    return Log 
 }
 ```
 
